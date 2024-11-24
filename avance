@@ -1,0 +1,139 @@
+#include <stdio.h>
+#include <math.h>
+#include <stdlib.h>
+#include <gmp.h>
+
+
+struct node {
+    unsigned int resto;
+    struct node *next;
+};
+
+struct Stack {
+    struct node *top;
+};
+
+void push(struct Stack *stack, unsigned int valor) {
+    struct node *nuevoNodo = (struct node *)calloc(1, sizeof(struct node));
+
+    nuevoNodo->resto = valor;       
+    nuevoNodo->next = stack->top;  
+    stack->top = nuevoNodo;        
+    printf("Elemento %d añadido a la pila.\n", valor);
+}
+
+
+unsigned int pop(struct Stack *stack) {
+    unsigned int valor = 0;
+    if (stack->top == NULL) {
+        printf("Error: La pila está vacía.\n");
+        return 555;
+    }
+    struct node *aux = stack->top;  // Nodo que vamos a eliminar
+    valor = aux->resto;          // Guarda el valor del nodo
+    stack->top = aux->next;         // Mueve el tope al siguiente nodo
+    free(aux);                      // Libera la memoria del nodo eliminado
+    printf("Elemento %d eliminado de la pila.\n", valor);
+    return valor;
+}
+
+unsigned int empty(struct Stack *stack) {
+    if(stack->top == NULL){
+        return 1;
+    } else {
+        return 0;
+    }
+}
+void mostrar_pila(struct Stack *stack) {
+    // Verifica si la pila está vacía
+    if (stack->top == NULL) {
+        printf("La pila está vacía.\n");
+        return;
+    }
+
+    struct node *aux = stack->top; // Comenzamos desde el nodo superior
+    printf("Contenido de la pila:\n");
+    while (aux != NULL) {
+        printf("%u\n", aux->resto); // Mostrar el valor del campo 'resto'
+        aux = aux->next;       // Moverse al siguiente nodo
+    }
+}
+void algoritmo_euclideano(mpz_t a, mpz_t b) {
+    mpz_t r;
+    mpz_init(r);
+    while (mpz_cmp_ui(b, 0) != 0) {
+        mpz_mod(r, a, b);
+        mpz_set(a, b);
+        mpz_set(b, r);
+    }
+    printf("El maximo comun divisor de p y q es: ");
+    gmp_printf("%Zd\n", a);
+    mpz_clear(r);
+}
+void algoritmo_modular(mpz_t a , mpz_t b){
+    struct Stack pila;
+    pila.top = NULL;
+    int q_digitos_bin = 0;
+    int log2 = 0;
+    unsigned long auxiliar= 0, aux2 = 0;
+    mpz_t resto;
+    mpz_init(resto);
+    unsigned long int a22 = mpz_get_ui(b);
+    printf("El valor de n es: %lu\n", a22);
+    unsigned long int a32 = mpz_get_ui(a);
+    printf("El valor de a es: %lu\n", a32);
+    if (mpz_get_ui(b)==0){
+        q_digitos_bin = 1;
+        printf("Cantidad de digitos binarioS: %d\n", q_digitos_bin);
+    } else{
+        q_digitos_bin = mpz_get_ui(b);
+        q_digitos_bin = floor((log(q_digitos_bin) / log(2)) +1);
+        printf("Cantidad de digitos binarios: %d\n", q_digitos_bin);
+    }
+
+    mpz_t aux;
+    mpz_init_set_ui(aux, 2);
+;
+
+    for(int i = 0; i < q_digitos_bin; i = i + 1){
+        mpz_fdiv_qr(b, resto, b, aux);
+        auxiliar = mpz_get_ui(resto);
+        push(&pila, auxiliar);
+    }
+    mostrar_pila(&pila);
+
+}
+int main() {
+    // Declarar variables de tipo mpz_t para números grandes
+    mpz_t p, q, result, aux;
+
+    // Inicializar las variables
+    mpz_init(p);
+    mpz_init(q);
+    mpz_init(result);
+
+    // Leer los números grandes desde el usuario
+    printf("Introduce el primer número primo grande (p): ");
+    gmp_scanf("%Zd", &p);
+
+    printf("Introduce el segundo número primo grande (q): ");
+    gmp_scanf("%Zd", &q);
+
+    // Multiplicar los números grandes
+    mpz_mul(result, p, q);
+
+    // Mostrar el resultado
+    printf("El resultado de p * q es: ");
+    gmp_printf("%Zd\n", result);
+
+    // Calcular el máximo común divisor de p y q
+    algoritmo_euclideano(p, q);
+    
+    algoritmo_modular(p, q);
+    // Liberar la memoria usada por las variables
+    mpz_clear(p);
+    mpz_clear(q);
+    mpz_clear(result);
+    return 0;
+}
+
