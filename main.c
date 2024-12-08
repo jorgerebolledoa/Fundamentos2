@@ -5,7 +5,8 @@
 #include <time.h>
 
 int is_prime(mpz_t n);
-
+clock_t start, end;
+ double cpu_time_used;
 struct node {
     unsigned int resto;
     struct node *next;
@@ -165,28 +166,55 @@ void generate_random_number(mpz_t number, unsigned int n) {
 }
 
 void iterar_funciones(int k, unsigned int n) {
-    mpz_t a, b;
-    mpz_inits(a, b, NULL);
-
+    mpz_t a, b, result;
+    mpz_inits(a, b,result, NULL);
+    generate_random_number(a, n);
+    generate_random_number(b, n);
+    
+    
     for (int i = 0; i < k; i++) {
-        generate_random_number(a, n);
-        generate_random_number(b, n);
-
         printf("\nIteración %d:\n", i + 1);
         printf("Número aleatorio 1: ");
         gmp_printf("%Zd\n", a);
         printf("Número aleatorio 2: ");
-        gmp_printf("%Zd\n", b);
+        gmp_printf("%Zd\n", b); 
+        start = clock();
+        mpz_mul(result, a, b);
+        end = clock();
+        cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+        printf("El resultado de a * b es: ");
+        gmp_printf("%Zd\n", result);
+        printf("Tiempo de ejecución: %f segundos\n", cpu_time_used);
+      
 
+        start = clock(); // Iniciar medición
         algoritmo_euclideano(a, b);
+        end = clock(); // Finalizar medición
+        // Calcular el tiempo de CPU usado
+        cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+        // Mostrar el tiempo de ejecución
+        printf("Tiempo de ejecución: %f segundos\n", cpu_time_used);
+        start = clock(); // Iniciar medición
         algoritmo_modular(a, b);
-        trial_division_factorization(a);
+        end = clock(); // Finalizar medición
+        // Calcular el tiempo de CPU usado
+        cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+        // Mostrar el tiempo de ejecución
+        printf("Tiempo de ejecución: %f segundos\n", cpu_time_used);
+        start = clock(); // Iniciar medición
+        trial_division_factorization(a); // Factorización
+        end = clock(); // Finalizar medición
+        // Calcular el tiempo de CPU usado
+        cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+        // Mostrar el tiempo de ejecución
+        printf("Tiempo de ejecución: %f segundos\n", cpu_time_used);
     }
 
     mpz_clears(a, b, NULL);
 }
 
 int main() {
+   
     unsigned int n, k;
     printf("Ingrese el tamaño de los números aleatorios (n): ");
     scanf("%u", &n);
