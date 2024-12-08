@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <gmp.h> // Biblioteca para manejo de números grandes
 #include <stdlib.h>
+#include <time.h> // Biblioteca para medir el tiempo
+
 
 // Función para determinar si un número es primo
 int is_prime(mpz_t n) {
@@ -71,6 +73,13 @@ void trial_division_factorization(mpz_t n) {
 }
 
 int main() {
+      // Variables para medir el tiempo
+    clock_t start, end;
+    double cpu_time_used;
+
+    // Iniciar la medición del tiempo
+    start = clock();
+
     // Inicializar el número n
     mpz_t n;
     mpz_init(n);
@@ -91,6 +100,14 @@ int main() {
 
     // Liberar memoria
     mpz_clear(n);
+     // Finalizar la medición del tiempo
+    end = clock();
+
+    // Calcular el tiempo de CPU usado
+    cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+
+    // Mostrar el tiempo de ejecución
+    printf("Tiempo de ejecución: %f segundos\n", cpu_time_used);
 
     return 0;
 }

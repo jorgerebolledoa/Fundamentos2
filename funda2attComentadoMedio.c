@@ -2,6 +2,7 @@
 #include <math.h>
 #include <stdlib.h>
 #include <gmp.h>
+#include <time.h> 
   
 
 struct node {
@@ -172,9 +173,11 @@ void trial_division_factorization(mpz_t n) {
     mpz_clears(factor, exp, remainder, sqrt_n, NULL);
 }
 int main() {
-    // Declarar variables de tipo mpz_t para números grandes
     mpz_t p, q, result, aux, p2, q2, p3, q3;
     unsigned int opcion;
+    clock_t start, end; // Variables para medir el tiempo
+    double cpu_time_used;
+
     // Inicializar las variables
     mpz_init(p);
     mpz_init(q);
@@ -186,62 +189,98 @@ int main() {
 
     opcion = 0;
 
-    printf("0 para multiplicar numeros grandes, 1 para calcular el gcd euclideano, 2 para calcular la exponenciacion modular, 3 Trial Division con sieve of Eratothenes, o 4 para salir\n");
+    printf("0 para multiplicar números grandes, 1 para calcular el gcd euclideano, 2 para calcular la exponenciación modular, 3 para Trial Division con sieve of Eratosthenes, o 4 para salir\n");
     scanf("%d", &opcion);
-    switch(opcion){
+
+    switch (opcion) {
         case 0:
             // Leer los números grandes desde el usuario
             printf("Introduce el primer número primo grande (p): ");
             gmp_scanf("%Zd", &p);
             printf("Introduce el segundo número primo grande (q): ");
             gmp_scanf("%Zd", &q);
-            // Multiplicar los números grandes
-            mpz_mul(result, p, q);
 
-            // Mostrar el resultado
+            start = clock(); // Iniciar medición
+            mpz_mul(result, p, q); // Multiplicar
+            end = clock(); // Finalizar medición
+
             printf("El resultado de p * q es: ");
             gmp_printf("%Zd\n", result);
+
+            // Calcular y mostrar tiempo de ejecución
+            cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+            printf("Tiempo de ejecución: %f segundos\n", cpu_time_used);
+
             mpz_clear(p);
             mpz_clear(q);
             mpz_clear(result);
             break;
+
         case 1:
             printf("Introduce el primer número: ");
             gmp_scanf("%Zd", &p2);
             printf("Introduce el segundo número: ");
             gmp_scanf("%Zd", &q2);
 
-            algoritmo_euclideano(p2, q2);
+            start = clock(); // Iniciar medición
+            algoritmo_euclideano(p2, q2); // GCD Euclideano
+            end = clock(); // Finalizar medición
+
+            cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+            printf("Tiempo de ejecución: %f segundos\n", cpu_time_used);
+
             mpz_clear(p2);
             mpz_clear(q2);
             break;
+
         case 2:
-            printf("Introduce la base(debe ser un numero natural): ");
+            printf("Introduce la base (debe ser un número natural): ");
             gmp_scanf("%Zd", &p3);
-            printf("Introduce el exponente(debe ser un numero natural): ");
+            printf("Introduce el exponente (debe ser un número natural): ");
             gmp_scanf("%Zd", &q3);
-            algoritmo_modular(p3, q3);
+
+            start = clock(); // Iniciar medición
+            algoritmo_modular(p3, q3); // Exponenciación modular
+            end = clock(); // Finalizar medición
+
+            cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+            printf("Tiempo de ejecución: %f segundos\n", cpu_time_used);
+
             mpz_clear(p3);
             mpz_clear(q3);
             break;
+
         case 3:
             mpz_t n;
             mpz_init(n);
 
-            // Pedir al usuario el número a factorizar
             printf("Ingresa un número grande para factorizar: ");
             gmp_scanf("%Zd", n);
 
-            // Validar que el número sea mayor o igual a 2
             if (mpz_cmp_ui(n, 2) < 0) {
                 printf("El número debe ser mayor o igual a 2.\n");
                 mpz_clear(n);
                 return 1;
             }
 
-            // Factorizar el número
-            trial_division_factorization(n);
+            start = clock(); // Iniciar medición
+            trial_division_factorization(n); // Factorización
+            end = clock(); // Finalizar medición
+
+            cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+            printf("Tiempo de ejecución: %f segundos\n", cpu_time_used);
+
             mpz_clear(n);
+            break;
+
+        case 4:
+            printf("Saliendo...\n");
+            break;
+
+        default:
+            printf("Opción no válida.\n");
+            break;
     }
+
     return 0;
 }
