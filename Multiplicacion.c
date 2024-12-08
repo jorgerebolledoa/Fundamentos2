@@ -1,7 +1,15 @@
 #include <stdio.h>
 #include <gmp.h>
+#include <time.h> // Biblioteca para medir el tiempo
 
 int main() {
+    // Variables para medir el tiempo
+    clock_t start, end;
+    double cpu_time_used;
+
+    // Iniciar la medición del tiempo
+    start = clock();
+
     // Declarar variables de tipo mpz_t para números grandes
     mpz_t p, q, result;
 
@@ -28,6 +36,15 @@ int main() {
     mpz_clear(p);
     mpz_clear(q);
     mpz_clear(result);
+
+    // Finalizar la medición del tiempo
+    end = clock();
+
+    // Calcular el tiempo de CPU usado
+    cpu_time_used = ((double)(end - start)) / CLOCKS_PER_SEC;
+
+    // Mostrar el tiempo de ejecución
+    printf("Tiempo de ejecución: %f segundos\n", cpu_time_used);
 
     return 0;
 }
