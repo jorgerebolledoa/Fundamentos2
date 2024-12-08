@@ -174,8 +174,14 @@ void iterar_funciones(int k, unsigned int n) {
     for (int i = 0; i < k; i++) {
         generate_random_number(a, n);
         generate_random_number(b, n);
-      while (mpz_cmp(a, b) == 0) {
+        mpz_t a_aux, b_aux;
+        mpz_init(a_aux);
+        mpz_init(b_aux);
+        mpz_set(a_aux, a);
+        mpz_set(b_aux, b);
+      while (mpz_cmp(a, b) == 0 || mpz_cmp(a, a_aux) == 0 || mpz_cmp(b, b_aux) == 0) {
             generate_random_number(b, n); // Regenerar b si es igual a a
+            generate_random_number(a, n);
         }
         printf("\nIteración %d:\n", i + 1);
         printf("Número aleatorio 1: ");
