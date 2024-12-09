@@ -94,39 +94,6 @@ void algoritmo_modular(mpz_t a , mpz_t b) {
     gmp_printf("Exponenciación modular: %Zd\n", r_0);
     mpz_clears(r_0, resto, aux, NULL);
 }
-
-void trial_division_factorization(mpz_t n) {
-    printf("Factores primos:\n");
-
-    mpz_t factor, exp, remainder, sqrt_n;
-    mpz_inits(factor, exp, remainder, sqrt_n, NULL);
-    mpz_sqrt(sqrt_n, n);
-
-    for (mpz_set_ui(factor, 2); mpz_cmp(factor, sqrt_n) <= 0; mpz_add_ui(factor, factor, 1)) {
-        if (!is_prime(factor)) continue;
-
-        mpz_set_ui(exp, 0);
-        while (1) {
-            mpz_mod(remainder, n, factor);
-            if (mpz_cmp_ui(remainder, 0) != 0) break;
-
-            mpz_divexact(n, n, factor);
-            mpz_add_ui(exp, exp, 1);
-        }
-
-        if (mpz_cmp_ui(exp, 0) > 0) {
-            gmp_printf("%Zd^%Zd\n", factor, exp);
-        }
-
-        mpz_sqrt(sqrt_n, n);
-    }
-
-    if (mpz_cmp_ui(n, 1) > 0) {
-        gmp_printf("%Zd^1\n", n);
-    }
-
-    mpz_clears(factor, exp, remainder, sqrt_n, NULL);
-}
 int is_prime(mpz_t n) {
     if (mpz_cmp_ui(n, 2) < 0) return 0; // Números menores a 2 no son primos
     if (mpz_cmp_ui(n, 2) == 0) return 1; // 2 es primo
@@ -148,6 +115,49 @@ int is_prime(mpz_t n) {
 
     mpz_clears(i, sqrt_n, remainder, NULL);
     return 1; // Es primo
+}
+
+void trial_division_factorization(mpz_t n) {
+    printf("Factores primos:\n");
+
+    mpz_t factor, exp, remainder, sqrt_n;
+    mpz_inits(factor, exp, remainder, sqrt_n, NULL);
+
+    // Calcular √n
+    mpz_sqrt(sqrt_n, n);
+
+    // Iterar desde 2 hasta √n
+    for (mpz_set_ui(factor, 2); mpz_cmp(factor, sqrt_n) <= 0; mpz_add_ui(factor, factor, 1)) {
+        if (!is_prime(factor)) continue; // Saltar números no primos
+
+        // Inicializar exponente
+        mpz_set_ui(exp, 0);
+
+        // Dividir n por factor mientras sea divisible
+        while (1) {
+            mpz_mod(remainder, n, factor);
+            if (mpz_cmp_ui(remainder, 0) != 0) break;
+
+            mpz_divexact(n, n, factor); // n = n / factor
+            mpz_add_ui(exp, exp, 1);    // Incrementar exponente
+        }
+
+        // Si el factor aparece al menos una vez, imprimirlo
+        if (mpz_cmp_ui(exp, 0) > 0) {
+            gmp_printf("%Zd^%Zd\n", factor, exp);
+        }
+
+        // Recalcular √n en cada iteración
+        mpz_sqrt(sqrt_n, n);
+    }
+
+    // Si queda un factor mayor que √n
+    if (mpz_cmp_ui(n, 1) > 0) {
+        gmp_printf("%Zd^1\n", n);
+    }
+
+    // Liberar memoria
+    mpz_clears(factor, exp, remainder, sqrt_n, NULL);
 }
 
 // Generar números aleatorios de tamaño n
