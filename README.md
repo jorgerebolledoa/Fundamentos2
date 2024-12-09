@@ -8,4 +8,4 @@ Para compilar el código, utiliza el siguiente comando:
 
 ```bash
 gcc codigo.c -o codigo.out -lgmp -lm
-
+./codigo.out
